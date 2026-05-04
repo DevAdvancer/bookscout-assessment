@@ -22,6 +22,16 @@ public struct BooksListView: View {
                         }
                 } else {
                     List {
+                        Section {
+                            SubjectFilterBar(
+                                subjects: viewModel.subjects,
+                                selectedSubject: viewModel.selectedSubject,
+                                onSelect: { subject in viewModel.setSubject(subject) }
+                            )
+                        }
+                        .listRowInsets(EdgeInsets())
+                        .listRowSeparator(.hidden)
+
                         if let cacheNotice = viewModel.cacheNotice {
                             Text(cacheNotice)
                                 .foregroundStyle(.secondary)
@@ -52,13 +62,6 @@ public struct BooksListView: View {
                 ),
                 prompt: "Search title, author, subject"
             )
-            .safeAreaInset(edge: .top) {
-                SubjectFilterBar(
-                    subjects: viewModel.subjects,
-                    selectedSubject: viewModel.selectedSubject,
-                    onSelect: { subject in viewModel.setSubject(subject) }
-                )
-            }
             .toolbar {
                 #if os(iOS)
                 ToolbarItem(placement: .topBarTrailing) {
@@ -135,7 +138,11 @@ private struct SubjectFilterBar: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
         }
-        .background(.bar)
+        #if os(iOS)
+        .background(Color(uiColor: .systemBackground))
+        #else
+        .background(Color(nsColor: .windowBackgroundColor))
+        #endif
     }
 }
 
